@@ -24,9 +24,9 @@ def EditDistanceDynamic(str1, str2, m, n):
             # If last character are different, consider all
             # possibilities and find minimum
             else:
-                dp[i][j] = 1 + min(dp[i][j-1],     # Insert
-                                dp[i-1][j],     # Remove
-                                dp[i-1][j-1]) # Replace
+                dp[i][j] = min(20 + dp[i][j-1],     # Insert
+                               20 + dp[i-1][j],     # Remove
+                               5 + dp[i-1][j-1]) # Replace
 
     return dp[m][n]
 
@@ -34,21 +34,21 @@ def EditDistanceDynamic(str1, str2, m, n):
 def EditDistanceRecursive(str1, str2, m, n):
 
     if m == 0:
-        return n
+        return n*20
 
     if n == 0:
-        return m
+        return m*20
 
     if str1[m-1] == str2[n-1]:
         return EditDistanceRecursive(str1, str2, m-1, n-1)
 
-    return   min(1 + EditDistanceRecursive(str1, str2, m, n-1), #Insert a character
-                 1 + EditDistanceRecursive(str1, str2, m-1, n), # Remove a character
-                 1 + EditDistanceRecursive(str1, str2, m-1, n-1) # Replace a character
+    return   min(20 + EditDistanceRecursive(str1, str2, m, n-1), #Insert a character
+                 20 + EditDistanceRecursive(str1, str2, m-1, n), # Remove a character
+                 5 + EditDistanceRecursive(str1, str2, m-1, n-1) # Replace a character
                 )
 
 #Main Runline
-str1 = "kitten"
-str2 = "sitting"
+str1 = "hon"
+str2 = "hobn"
 print (EditDistanceRecursive(str1, str2, len(str1), len(str2)))
-#print(EditDistanceDynamic(str1, str2, len(str1), len(str2)))
+print(EditDistanceDynamic(str1, str2, len(str1), len(str2)))
