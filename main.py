@@ -42,13 +42,13 @@ def EditDistanceRecursive(str1, str2, m, n):
     if str1[m-1] == str2[n-1]:
         return EditDistanceRecursive(str1, str2, m-1, n-1)
 
-    return   min(20 + EditDistanceRecursive(str1, str2, m, n-1), #Insert a character
-                 20 + EditDistanceRecursive(str1, str2, m-1, n), # Remove a character
-                 5 + EditDistanceRecursive(str1, str2, m-1, n-1) # Replace a character
+    return   min(1 + EditDistanceRecursive(str1, str2, m, n-1), #Insert a character
+                 1 + EditDistanceRecursive(str1, str2, m-1, n), # Remove a character
+                 1 + EditDistanceRecursive(str1, str2, m-1, n-1) # Replace a character
                 )
 
 #Main Runline
-str1 = "algorithm"
-str2 = "alligator"
+str1 = "kitten"
+str2 = "sitting"
 print (EditDistanceRecursive(str1, str2, len(str1), len(str2)))
-print(EditDistanceDynamic(str1, str2, len(str1), len(str2)))
+#print(EditDistanceDynamic(str1, str2, len(str1), len(str2)))
