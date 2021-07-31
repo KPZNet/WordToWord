@@ -1,6 +1,11 @@
-def EditDistanceDynamic(str1, str2, m, n):
-    # Create a table to store results of subproblems
-    dp = [[0 for x in range(n + 1)] for x in range(m + 1)]
+
+INSERT_COST = 20
+DELETE_COST = 20
+REPLACE_COST = 5
+
+def WordTransformCost_DP(str1, str2, m, n):
+
+    wordTransferScoreMatrix = [[0 for x in range(n + 1)] for x in range(m + 1)]
 
     # Fill d[][] in bottom up manner
     for i in range(m + 1):
@@ -9,29 +14,30 @@ def EditDistanceDynamic(str1, str2, m, n):
             # If first string is empty, only option is to
             # insert all characters of second string
             if i == 0:
-                dp[i][j] = j # Min. operations = j
+                wordTransferScoreMatrix[i][j] = j # Min. operations = j
 
             # If second string is empty, only option is to
             # remove all characters of second string
             elif j == 0:
-                dp[i][j] = i # Min. operations = i
+                wordTransferScoreMatrix[i][j] = i # Min. operations = i
 
             # If last characters are same, ignore last char
             # and recur for remaining string
             elif str1[i-1] == str2[j-1]:
-                dp[i][j] = dp[i-1][j-1]
+                wordTransferScoreMatrix[i][j] = wordTransferScoreMatrix[i-1][j-1]
 
             # If last character are different, consider all
             # possibilities and find minimum
             else:
-                dp[i][j] = min(20 + dp[i][j-1],     # Insert
-                               20 + dp[i-1][j],     # Remove
-                               5 + dp[i-1][j-1]) # Replace
+                minCost = min( INSERT_COST + wordTransferScoreMatrix[i][j-1],     # Insert
+                               DELETE_COST + wordTransferScoreMatrix[i-1][j],     # Remove
+                               REPLACE_COST + wordTransferScoreMatrix[i-1][j-1])  # Replace
+                wordTransferScoreMatrix[i][j] = minCost
 
-    return dp[m][n]
+    return wordTransferScoreMatrix[m][n]
 
 
-def EditDistanceRecursive(str1, str2, m, n):
+def WordTransformCost_Recursive(str1, str2, m, n):
 
     if m == 0:
         return n*20
@@ -40,15 +46,15 @@ def EditDistanceRecursive(str1, str2, m, n):
         return m*20
 
     if str1[m-1] == str2[n-1]:
-        return EditDistanceRecursive(str1, str2, m-1, n-1)
+        return WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )
 
-    return   min(20 + EditDistanceRecursive(str1, str2, m, n-1), #Insert a character
-                 20 + EditDistanceRecursive(str1, str2, m-1, n), # Remove a character
-                 5 + EditDistanceRecursive(str1, str2, m-1, n-1) # Replace a character
-                )
+    return   min( 20 + WordTransformCost_Recursive( str1, str2, m, n - 1 ),  #Insert a character
+                  20 + WordTransformCost_Recursive( str1, str2, m - 1, n ),  # Remove a character
+                  5 + WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )  # Replace a character
+                  )
 
 #Main Runline
 str1 = "hon"
 str2 = "hobn"
-print (EditDistanceRecursive(str1, str2, len(str1), len(str2)))
-print(EditDistanceDynamic(str1, str2, len(str1), len(str2)))
+print ( WordTransformCost_Recursive( str1, str2, len( str1 ), len( str2 ) ) )
+print( WordTransformCost_DP( str1, str2, len( str1 ), len( str2 ) ) )
