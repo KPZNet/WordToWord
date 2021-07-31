@@ -1,7 +1,11 @@
 
+import numpy as np
+import pprint
+
 INSERT_COST = 20
 DELETE_COST = 20
 REPLACE_COST = 5
+
 
 def WordTransformCost_DP(str1, str2, m, n):
 
@@ -34,16 +38,21 @@ def WordTransformCost_DP(str1, str2, m, n):
                                REPLACE_COST + wordTransferScoreMatrix[i-1][j-1])  # Replace
                 wordTransferScoreMatrix[i][j] = minCost
 
+    print ( np.matrix ( wordTransferScoreMatrix ) )
+
+    pp = pprint.PrettyPrinter ( indent=4 )
+    pp.pprint(wordTransferScoreMatrix)
+
     return wordTransferScoreMatrix[m][n]
 
 
 def WordTransformCost_Recursive(str1, str2, m, n):
 
     if m == 0:
-        return n*20
+        return n* INSERT_COST
 
     if n == 0:
-        return m*20
+        return m* INSERT_COST
 
     if str1[m-1] == str2[n-1]:
         return WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )
@@ -54,7 +63,7 @@ def WordTransformCost_Recursive(str1, str2, m, n):
                   )
 
 #Main Runline
-str1 = "hon"
-str2 = "hobn"
-print ( WordTransformCost_Recursive( str1, str2, len( str1 ), len( str2 ) ) )
-print( WordTransformCost_DP( str1, str2, len( str1 ), len( str2 ) ) )
+wordOne = "hon"
+wordTwo = "hobn"
+print ( WordTransformCost_Recursive( wordOne, wordTwo, len( wordOne ), len( wordTwo ) ) )
+print( WordTransformCost_DP( wordOne, wordTwo, len( wordOne ), len( wordTwo ) ) )
