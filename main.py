@@ -2,7 +2,7 @@
 import numpy as np
 from pkprint import ndtotext
 
-INSERT_COST = 20
+INSERT_COST = 30
 DELETE_COST = 20
 REPLACE_COST = 5
 
@@ -20,12 +20,12 @@ def WordTransformCost_DP(str1, str2, m, n):
             # If first string is empty, only option is to
             # insert all characters of second string
             if i == 0:
-                wordTransferScoreMatrix[i][j] = j # Min. operations = j
+                wordTransferScoreMatrix[i][j] = j * INSERT_COST # Min. operations = j
 
             # If second string is empty, only option is to
             # remove all characters of second string
             elif j == 0:
-                wordTransferScoreMatrix[i][j] = i # Min. operations = i
+                wordTransferScoreMatrix[i][j] = i * INSERT_COST # Min. operations = i
 
             # If last characters are same, ignore last char
             # and recur for remaining string
@@ -63,7 +63,7 @@ def WordTransformCost_Recursive(str1, str2, m, n):
                   )
 
 #Main Runline
-wordOne = "hon"
-wordTwo = "hobn"
+wordOne = "dog"
+wordTwo = "dogy"
 print ( WordTransformCost_Recursive( wordOne, wordTwo, len( wordOne ), len( wordTwo ) ) )
 print( WordTransformCost_DP( wordOne, wordTwo, len( wordOne ), len( wordTwo ) ) )
