@@ -2,9 +2,9 @@
 import numpy as np
 from pkprint import ndtotext
 
-INSERT_COST = 30
-DELETE_COST = 20
-REPLACE_COST = 5
+INSERT_COST = 2
+DELETE_COST = 2
+REPLACE_COST = 1
 
 
 
@@ -35,9 +35,10 @@ def WordTransformCost_DP(str1, str2, m, n):
             # If last character are different, consider all
             # possibilities and find minimum
             else:
-                minCost = min( INSERT_COST + wordTransferScoreMatrix[i][j-1],     # Insert
-                               DELETE_COST + wordTransferScoreMatrix[i-1][j],     # Remove
-                               REPLACE_COST + wordTransferScoreMatrix[i-1][j-1])  # Replace
+                ins = INSERT_COST + wordTransferScoreMatrix[i][j-1]    # Insert
+                rmv = DELETE_COST + wordTransferScoreMatrix[i-1][j]     # Remove
+                rep = REPLACE_COST + wordTransferScoreMatrix[i-1][j-1]  # Replace
+                minCost = min(ins, rmv, rep)
                 wordTransferScoreMatrix[i][j] = minCost
 
     a = np.array ( wordTransferScoreMatrix )
@@ -57,13 +58,13 @@ def WordTransformCost_Recursive(str1, str2, m, n):
     if str1[m-1] == str2[n-1]:
         return WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )
 
-    return   min( 20 + WordTransformCost_Recursive( str1, str2, m, n - 1 ),  #Insert a character
-                  20 + WordTransformCost_Recursive( str1, str2, m - 1, n ),  # Remove a character
-                  5 + WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )  # Replace a character
+    return   min( 1 + WordTransformCost_Recursive( str1, str2, m, n - 1 ),  #Insert a character
+                  1 + WordTransformCost_Recursive( str1, str2, m - 1, n ),  # Remove a character
+                  2 + WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )  # Replace a character
                   )
 
 #Main Runline
-wordOne = "dog"
-wordTwo = "dogy"
+wordOne = "AB"
+wordTwo = "CDF"
 print ( WordTransformCost_Recursive( wordOne, wordTwo, len( wordOne ), len( wordTwo ) ) )
 print( WordTransformCost_DP( wordOne, wordTwo, len( wordOne ), len( wordTwo ) ) )
