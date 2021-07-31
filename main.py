@@ -7,47 +7,41 @@ DELETE_COST = 2
 REPLACE_COST = 1
 
 
+def WordTransformCost_DP(wordFrom, wordTo, m, n) ->int:
 
+    wordTransferScoreMatrix = InitializeScoreMatrix(m, n)
 
-def WordTransformCost_DP(str1, str2, m, n):
-
-    wordTransferScoreMatrix = [[0 for x in range(n + 1)] for x in range(m + 1)]
-
-    # Fill d[][] in bottom up manner
     for i in range(m + 1):
         for j in range(n + 1):
 
-            # If first string is empty, only option is to
-            # insert all characters of second string
             if i == 0:
-                wordTransferScoreMatrix[i][j] = j * INSERT_COST # Min. operations = j
+                wordTransferScoreMatrix[i][j] = j * INSERT_COST
 
-            # If second string is empty, only option is to
-            # remove all characters of second string
             elif j == 0:
-                wordTransferScoreMatrix[i][j] = i * INSERT_COST # Min. operations = i
+                wordTransferScoreMatrix[i][j] = i * INSERT_COST
 
-            # If last characters are same, ignore last char
-            # and recur for remaining string
-            elif str1[i-1] == str2[j-1]:
+            elif wordFrom[i - 1] == wordTo[j - 1]:
                 wordTransferScoreMatrix[i][j] = wordTransferScoreMatrix[i-1][j-1]
 
-            # If last character are different, consider all
-            # possibilities and find minimum
             else:
-                ins = INSERT_COST + wordTransferScoreMatrix[i][j-1]    # Insert
-                rmv = DELETE_COST + wordTransferScoreMatrix[i-1][j]     # Remove
-                rep = REPLACE_COST + wordTransferScoreMatrix[i-1][j-1]  # Replace
-                minCost = min(ins, rmv, rep)
-                wordTransferScoreMatrix[i][j] = minCost
+                UpdateScoreMatrix(i, j, wordTransferScoreMatrix)
 
-    a = np.array ( wordTransferScoreMatrix )
-    print(ndtotext(a, 10, 20))
-
+    print(ndtotext(np.array ( wordTransferScoreMatrix )))
     return wordTransferScoreMatrix[m][n]
 
+def InitializeScoreMatrix(m, n):
+    wordTransferScoreMatrix = [[0 for x in range(n + 1)] for x in range(m + 1)]
+    return wordTransferScoreMatrix
 
-def WordTransformCost_Recursive(str1, str2, m, n):
+def UpdateScoreMatrix(i, j, wordTransferScoreMatrix):
+    insert_cost = INSERT_COST + wordTransferScoreMatrix[i][j - 1]
+    remove_cost = DELETE_COST + wordTransferScoreMatrix[i - 1][j]
+    replacement_cost = REPLACE_COST + wordTransferScoreMatrix[i - 1][j - 1]
+    min_cost = min(insert_cost, remove_cost, replacement_cost)
+    wordTransferScoreMatrix[i][j] = min_cost
+
+
+def WordTransformCost_Recursive(str1, str2, m, n) -> int:
 
     if m == 0:
         return n* INSERT_COST
@@ -58,9 +52,9 @@ def WordTransformCost_Recursive(str1, str2, m, n):
     if str1[m-1] == str2[n-1]:
         return WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )
 
-    return   min( 1 + WordTransformCost_Recursive( str1, str2, m, n - 1 ),  #Insert a character
-                  1 + WordTransformCost_Recursive( str1, str2, m - 1, n ),  # Remove a character
-                  2 + WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )  # Replace a character
+    return   min( 1 + WordTransformCost_Recursive( str1, str2, m, n - 1 ),  #INSERT
+                  1 + WordTransformCost_Recursive( str1, str2, m - 1, n ),  #REMOVE
+                  2 + WordTransformCost_Recursive( str1, str2, m - 1, n - 1 )  #REPLACE
                   )
 
 #Main Runline
