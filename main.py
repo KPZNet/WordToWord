@@ -6,7 +6,6 @@ INSERT_COST = 2
 DELETE_COST = 2
 REPLACE_COST = 1
 
-
 def WordTransformCost_DP(wordFrom, wordTo, m, n) ->int:
 
     wordTransferScoreMatrix = InitializeScoreMatrix(m, n)
