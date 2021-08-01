@@ -50,7 +50,7 @@ def update_score_matrix(i, j, word_transform_score_matrix, word_transform_trace_
     insert_cost = Transfer(INSERT_COST + word_transform_score_matrix[i][j - 1], INSERT_SYM)
     remove_cost = Transfer(DELETE_COST + word_transform_score_matrix[i - 1][j], DELETE_SYM)
     replacement_cost = Transfer(REPLACE_COST + word_transform_score_matrix[i - 1][j - 1], REPLACE_SYM)
-    li = [replacement_cost, remove_cost, insert_cost ]
+    li = [replacement_cost, insert_cost, remove_cost  ]
     min_cost = min ( li, key=lambda x : x.cost )
     word_transform_score_matrix[i][j] = min_cost.cost
     word_transform_trace_matrix[i][j] = min_cost.funct
@@ -65,9 +65,9 @@ def initialize_trace_matrix(m: int, n: int) -> List[List[str]] :
 
 def combined_score_trace_matrices(score, trace, m, n):
     combined_matrix = initialize_trace_matrix(m, n)
-    for i in range(n+1):
-        for j in range(m+1):
-            sc_tr = "  " + trace[i][j] + ":" + str ( score[i][j] )
+    for i in range(m+1):
+        for j in range(n+1):
+            sc_tr = trace[i][j] + ":" + str ( score[i][j] )
             combined_matrix[i][j] = sc_tr
     return combined_matrix
 
@@ -111,8 +111,8 @@ def transform_word_recursive(str1, str2, m, n) -> int :
 # Main Runline
 init(autoreset = True)
 
-wordOne = "numpyrtyd"
-wordTwo = "numpytyd3"
+wordOne = "hoccccccand"
+wordTwo = "holand"
 total_score_recursive = transform_word_recursive(wordOne, wordTwo, len(wordOne), len(wordTwo))
 total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( wordOne, wordTwo, len ( wordOne ), len ( wordTwo ) )
 combined = combined_score_trace_matrices(score_matrix, trace_matrix,len(wordOne), len(wordTwo))
@@ -123,4 +123,7 @@ print (Fore.RED + Back.BLACK + 'some red text')
 
 print ( ndtotext ( np.array ( score_matrix ) ) )
 print ( ndtotext ( np.array ( trace_matrix ) ) )
+
+print(wordOne)
+print(wordTwo)
 print ( ndtotext ( np.array ( combined ) ) )
