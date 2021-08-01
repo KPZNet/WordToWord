@@ -1,5 +1,6 @@
 import numpy
 
+
 def ndtotext(A, w=None, h=None):
     if A.ndim==1:
         if w == None :
