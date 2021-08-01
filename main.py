@@ -12,16 +12,17 @@ DELETE_SYM = "D"
 REPLACE_SYM = "S"
 NOCHANGE_SYM = "N"
 
-TRACE_SYM = "*"
+TRACE_SYM_END = ")"
+TRACE_SYM_START = "("
 
 class Transfer:
     def __init__(self, _cost, _funct):
         self.cost = _cost
         self.funct = _funct
 
-
-def transform_word_dynamic_programming(wordFrom, wordTo, m, n) :
-
+def transform_word_dynamic_programming(wordFrom, wordTo) :
+    m = len(wordOne)
+    n = len(wordTwo)
     word_transfer_score_matrix = initialize_score_matrix ( m, n )
     word_transfer_trace_matrix = initialize_trace_matrix ( m, n )
 
@@ -67,7 +68,7 @@ def combined_score_trace_matrices(score, trace, m, n):
     combined_matrix = initialize_trace_matrix(m, n)
     for i in range(m+1):
         for j in range(n+1):
-            sc_tr = trace[i][j] + ":" + str ( score[i][j] )
+            sc_tr = " " + trace[i][j] + ":" + str ( score[i][j] )
             combined_matrix[i][j] = sc_tr
     return combined_matrix
 
@@ -79,33 +80,17 @@ def min_cost_path(cost, operations, m, n) :
 
     while row > 0 and col > 0 :
         if cost[row - 1][col - 1] <= cost[row - 1][col] and cost[row - 1][col - 1] <= cost[row][col - 1] :
-            operations[row - 1][col - 1] = operations[row - 1][col - 1] + TRACE_SYM
+            operations[row - 1][col - 1] = TRACE_SYM_START+ operations[row - 1][col - 1].strip() +TRACE_SYM_END
             row -= 1
             col -= 1
         elif cost[row - 1][col] <= cost[row - 1][col - 1] and cost[row - 1][col] <= cost[row][col - 1]:
-            operations[row - 1][col] = operations[row - 1][col] + TRACE_SYM
+            operations[row - 1][col] = TRACE_SYM_START+ operations[row - 1][col].strip() + TRACE_SYM_END
             row -= 1
         else :
-            operations[row][col - 1] = operations[row][col - 1] + TRACE_SYM
+            operations[row][col - 1] = TRACE_SYM_START+ operations[row][col - 1].strip() + TRACE_SYM_END
             col -= 1
 
     return operations
-
-
-def transform_word_recursive(str1, str2, m, n) -> int :
-    if m == 0 :
-        return n * INSERT_COST
-
-    if n == 0 :
-        return m * INSERT_COST
-
-    if str1[m - 1] == str2[n - 1] :
-        return transform_word_recursive ( str1, str2, m - 1, n - 1 )
-
-    return min ( 1 + transform_word_recursive ( str1, str2, m, n - 1 ),  # INSERT
-                 1 + transform_word_recursive ( str1, str2, m - 1, n ),  # REMOVE
-                 2 + transform_word_recursive ( str1, str2, m - 1, n - 1 )  # REPLACE
-                 )
 
 
 # Main Runline
@@ -113,17 +98,19 @@ init(autoreset = True)
 
 wordOne = "hoccccccand"
 wordTwo = "holand"
-total_score_recursive = transform_word_recursive(wordOne, wordTwo, len(wordOne), len(wordTwo))
-total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( wordOne, wordTwo, len ( wordOne ), len ( wordTwo ) )
-combined = combined_score_trace_matrices(score_matrix, trace_matrix,len(wordOne), len(wordTwo))
+print("-----------------------")
+print("Word From: " + wordOne)
+print("Word To: " + wordTwo)
+total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( wordOne, wordTwo )
+combined_matrix = combined_score_trace_matrices(score_matrix, trace_matrix, len(wordOne), len(wordTwo))
 
-combined = min_cost_path(score_matrix, combined,len(wordOne), len(wordTwo))
+combined_matrix = min_cost_path(score_matrix, combined_matrix, len(wordOne), len(wordTwo))
 
-print (Fore.RED + Back.BLACK + 'some red text')
-
+print("Score Matrix:")
 print ( ndtotext ( np.array ( score_matrix ) ) )
+print("Operations Matrix:")
 print ( ndtotext ( np.array ( trace_matrix ) ) )
 
-print(wordOne)
-print(wordTwo)
-print ( ndtotext ( np.array ( combined ) ) )
+print(Fore.MAGENTA + "Conversion Cost: {0}".format(total_score))
+print("Trace Path")
+print(ndtotext (np.array (combined_matrix)))
