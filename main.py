@@ -11,48 +11,54 @@ class Transfer:
         self.cost = _cost
         self.funct = _funct
 
-def transform_word_dynamic_programming(wordFrom, wordTo, m, n) -> int :
+
+
+
+
+
+
+def transform_word_dynamic_programming(wordFrom, wordTo, m, n) :
+
     word_transfer_score_matrix = initialize_score_matrix ( m, n )
     word_transfer_trace_matrix = initialize_trace_matrix ( m, n )
 
-    for i in range ( m + 1 ) :
-        for j in range ( n + 1 ) :
+    for k in range(len(wordTo)+1):
+        word_transfer_score_matrix[0][k] = k * INSERT_COST
+        word_transfer_trace_matrix[0][k] = "I"
+    for k in range(len(wordFrom)+1):
+        word_transfer_score_matrix[k][0] = k * DELETE_COST
+        word_transfer_trace_matrix[k][0] = "D"
 
-            if i == 0 :
-                word_transfer_trace_matrix[i][j] = 'I'
-                word_transfer_score_matrix[i][j] = j * INSERT_COST
+    word_transfer_trace_matrix[0][0] = '-'
 
-            elif j == 0 :
-                word_transfer_trace_matrix[i][j] = 'I'
-                word_transfer_score_matrix[i][j] = i * INSERT_COST
+    for i in range (1, m + 1) :
+        for j in range (1, n + 1 ) :
 
-            elif wordFrom[i - 1] == wordTo[j - 1] :
-                word_transfer_trace_matrix[i][j] = 'C'
+            if wordFrom[i - 1] == wordTo[j - 1] :
+                word_transfer_trace_matrix[i][j] = '-'
                 word_transfer_score_matrix[i][j] = word_transfer_score_matrix[i - 1][j - 1]
 
-            else :
+            else:
                 update_score_matrix ( i, j, word_transfer_score_matrix, word_transfer_trace_matrix )
 
     return word_transfer_score_matrix[m][n], word_transfer_score_matrix, word_transfer_trace_matrix
 
+def update_score_matrix(i, j, word_transform_score_matrix, word_transform_trace_matrix) :
+    insert_cost = Transfer(INSERT_COST + word_transform_score_matrix[i][j - 1], "I")
+    remove_cost = Transfer(DELETE_COST + word_transform_score_matrix[i - 1][j], "D")
+    replacement_cost = Transfer(REPLACE_COST + word_transform_score_matrix[i - 1][j - 1], "S")
+    li = [replacement_cost, remove_cost, insert_cost ]
+    min_cost = min ( li, key=lambda x : x.cost )
+    word_transform_score_matrix[i][j] = min_cost.cost
+    word_transform_trace_matrix[i][j] = min_cost.funct
 
 def initialize_score_matrix(m: int, n: int) -> List[List[int]] :
     word_transfer_score_matrix: List[List[int]] = [[0 for x in range ( n + 1 )] for x in range ( m + 1 )]
     return word_transfer_score_matrix
 
 def initialize_trace_matrix(m: int, n: int) -> List[List[str]] :
-    word_transfer_trace_matrix: List[List[str]] = [["X" for x in range ( n + 1 )] for x in range ( m + 1 )]
+    word_transfer_trace_matrix: List[List[str]] = [["-" for x in range ( n + 1 )] for x in range ( m + 1 )]
     return word_transfer_trace_matrix
-
-def update_score_matrix(i, j, word_transform_score_matrix, word_transform_trace_matrix) :
-    insert_cost = Transfer(INSERT_COST + word_transform_score_matrix[i][j - 1], "I")
-    remove_cost = Transfer(DELETE_COST + word_transform_score_matrix[i - 1][j], "D")
-    replacement_cost = Transfer(REPLACE_COST + word_transform_score_matrix[i - 1][j - 1], "R")
-    li = [insert_cost, remove_cost, replacement_cost]
-    min_cost = min ( li, key=lambda x : x.cost )
-    #min_cost = min ( insert_cost, remove_cost, replacement_cost )
-    word_transform_score_matrix[i][j] = min_cost.cost
-    word_transform_trace_matrix[i][j] = min_cost.funct
 
 
 def transform_word_recursive(str1, str2, m, n) -> int :
@@ -76,5 +82,6 @@ wordOne = "numpy"
 wordTwo = "numexpr"
 # print (transformword_recursive(wordOne, wordTwo, len(wordOne), len(wordTwo)))
 total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( wordOne, wordTwo, len ( wordOne ), len ( wordTwo ) )
+
 print ( ndtotext ( np.array ( score_matrix ) ) )
 print ( ndtotext ( np.array ( trace_matrix ) ) )
