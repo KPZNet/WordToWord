@@ -89,34 +89,25 @@ def combined_score_trace_matrices(score, trace, m, n):
             combined_matrix[i][j] = sc_tr
     return combined_matrix
 
-#routine to backtrack our cost matrix to mark up our operation matrix with the path used to
-#convert from word A to word B
-def min_cost_path(cost, operations, m, n) :
-    #init iterators
-    row = m - 0
-    col = n - 0
-    #loop from last square in matrix to path used (backtracking...)
-    #mark up a new matrix that shows cost and operations for each step in path
-    while row > 0 and col > 0 :
-        if cost[row - 1][col - 1] <= cost[row - 1][col] and cost[row - 1][col - 1] <= cost[row][col - 1] :
-            operations[row - 1][col - 1] = TRACE_SYM_START+ operations[row - 1][col - 1].strip() +TRACE_SYM_END
-            row -= 1
-            col -= 1
-        elif cost[row - 1][col] <= cost[row - 1][col - 1] and cost[row - 1][col] <= cost[row][col - 1]:
-            operations[row - 1][col] = TRACE_SYM_START+ operations[row - 1][col].strip() + TRACE_SYM_END
-            row -= 1
-        else :
-            operations[row][col - 1] = TRACE_SYM_START+ operations[row][col - 1].strip() + TRACE_SYM_END
-            col -= 1
-    #return special cost/operations path matrix
-    return operations
-
+#helper routine to add the words to the trace operation matrix
+#to make easy to read
+def add_words_to_combined(combined_matrix, wordOne, wordTwo):
+    #convert strings to lists and add NULLs to front
+    l1 = list("0" + "0" + wordOne)
+    l2 = list("0" + wordTwo)
+    #add TO word to first row
+    combined_matrix.insert(0, l2)
+    #add FROM word to first column
+    for l in range(len(l1)):
+        c = combined_matrix[l]
+        c.insert(0, "   " + l1[l] + "  ")
+    return combined_matrix
 
 # Main run
 init(autoreset = True)
 # set words to convert "from" and "to"
-wordOne = "algorithm"
-wordTwo = "alligator"
+wordOne = "cit"
+wordTwo = "catamaran"
 print("-----------------------")
 print("Word From: " + wordOne)
 print("Word To: " + wordTwo)
@@ -124,16 +115,8 @@ print("Word To: " + wordTwo)
 total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( wordOne, wordTwo )
 # create special matrix that has operations and costs for each step combined for easy viewing
 combined_matrix = combined_score_trace_matrices(score_matrix, trace_matrix, len(wordOne), len(wordTwo))
-# backtrack the special cost operations matrix and highlight exact path used to convert
-combined_matrix = min_cost_path(score_matrix, combined_matrix, len(wordOne), len(wordTwo))
-
-l1 = list("0" + "0" + wordOne)
-l2 = list("0" +  wordTwo)
-combined_matrix.insert(0, l2)
-
-for l in range(len(l1)):
-    c = combined_matrix[l]
-    c.insert(0, "   " + l1[l] + "  ")
+#add words to trace matrix for easy readability
+add_words_to_combined(combined_matrix, wordOne, wordTwo)
 
 #print out results!
 print("Score Matrix:")
