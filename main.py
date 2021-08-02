@@ -128,9 +128,6 @@ combined_matrix = min_cost_path(score_matrix, combined_matrix, len(wordOne), len
 #print out results!
 print("Score Matrix:")
 print ( ndtotext ( np.array ( score_matrix ) ) )
-print("Operations Matrix:")
-print ( ndtotext ( np.array ( trace_matrix ) ) )
-
 print(Fore.MAGENTA + "Conversion Cost: {0}".format(total_score))
 print("Trace Path")
 print(ndtotext (np.array (combined_matrix)))
