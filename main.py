@@ -112,19 +112,20 @@ def min_cost_path(cost, operations, m, n) :
     return operations
 
 
-# Main Runline
-init(autoreset = True)
-
+# Main run
+# set words to convert "from" and "to"
 wordOne = "python"
 wordTwo = "pithin"
 print("-----------------------")
 print("Word From: " + wordOne)
 print("Word To: " + wordTwo)
+# do main transformation from word A to word B
 total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( wordOne, wordTwo )
+# create special matrix that has operations and costs for each step combined for easy viewing
 combined_matrix = combined_score_trace_matrices(score_matrix, trace_matrix, len(wordOne), len(wordTwo))
-
+# backtrack the special cost operations matrix and highlight exact path used to convert
 combined_matrix = min_cost_path(score_matrix, combined_matrix, len(wordOne), len(wordTwo))
-
+#print out results!
 print("Score Matrix:")
 print ( ndtotext ( np.array ( score_matrix ) ) )
 print("Operations Matrix:")
