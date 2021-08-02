@@ -4,9 +4,9 @@ from pkprint import ndtotext
 from colorama import init, Fore, Back
 
 #constants for cost formula
-INSERT_COST = 1
-DELETE_COST = 1
-REPLACE_COST = 2
+INSERT_COST = 20
+DELETE_COST = 20
+REPLACE_COST = 5
 
 #symbols used to keep track of operations
 INSERT_SYM = "I"
@@ -113,9 +113,10 @@ def min_cost_path(cost, operations, m, n) :
 
 
 # Main run
+init(autoreset = True)
 # set words to convert "from" and "to"
-wordOne = "python"
-wordTwo = "pithin"
+wordOne = "algorithm"
+wordTwo = "alligator"
 print("-----------------------")
 print("Word From: " + wordOne)
 print("Word To: " + wordTwo)
@@ -125,6 +126,15 @@ total_score, score_matrix, trace_matrix = transform_word_dynamic_programming ( w
 combined_matrix = combined_score_trace_matrices(score_matrix, trace_matrix, len(wordOne), len(wordTwo))
 # backtrack the special cost operations matrix and highlight exact path used to convert
 combined_matrix = min_cost_path(score_matrix, combined_matrix, len(wordOne), len(wordTwo))
+
+l1 = list("0" + "0" + wordOne)
+l2 = list("0" +  wordTwo)
+combined_matrix.insert(0, l2)
+
+for l in range(len(l1)):
+    c = combined_matrix[l]
+    c.insert(0, "   " + l1[l] + "  ")
+
 #print out results!
 print("Score Matrix:")
 print ( ndtotext ( np.array ( score_matrix ) ) )
